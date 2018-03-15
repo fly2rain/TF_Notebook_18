@@ -13,22 +13,22 @@
 #  limitations under the License.
 """Convolutional Neural Network Estimator for MNIST, built with tf.layers."""
 
-from __future__ import absolute_import # ??? why __future__
+from __future__ import absolute_import # ??? 为什么 __future__ ??
 from __future__ import division
 from __future__ import print_function
 
 import numpy as np
 import tensorflow as tf
 
-tf.logging.set_verbosity(tf.logging.INFO) # ???
+tf.logging.set_verbosity(tf.logging.INFO) # ?????
 
 
 def cnn_model_fn(features, labels, mode):
   """Model function for CNN."""
   # Input Layer
-  # Reshape X to 4-D tensor: [batch_size, width, height, channels]
-  # MNIST images are 28x28 pixels, and have one color channel
-  input_layer = tf.reshape(features["x"], [-1, 28, 28, 1])
+  # Reshape X to 4-D tensor: 👍👍 [batch_size, width, height, channels] 👍👍
+  # MNIST images are 28x28 pixels, and have one color channel # 👍👍
+  input_layer = tf.reshape(features["x"], [-1, 28, 28, 1]) # 👍👍👍 -1 can be used to infer the shape 👍👍👍
 
   # Convolutional Layer #1
   # Computes 32 features using a 5x5 filter with ReLU activation.
@@ -39,7 +39,7 @@ def cnn_model_fn(features, labels, mode):
       inputs=input_layer,
       filters=32,
       kernel_size=[5, 5],
-      padding="same",
+      padding="same", # 👍👍 牛掰, padding is added to preserve width and height.
       activation=tf.nn.relu)
 
   # Pooling Layer #1
@@ -75,16 +75,16 @@ def cnn_model_fn(features, labels, mode):
   # Densely connected layer with 1024 neurons
   # Input Tensor Shape: [batch_size, 7 * 7 * 64]
   # Output Tensor Shape: [batch_size, 1024]
-  dense = tf.layers.dense(inputs=pool2_flat, units=1024, activation=tf.nn.relu)
+  dense = tf.layers.dense(inputs=pool2_flat, units=1024, activation=tf.nn.relu) # units 应该是输出结果的维度 ❤️❤️
 
   # Add dropout operation; 0.6 probability that element will be kept
-  dropout = tf.layers.dropout(
-      inputs=dense, rate=0.4, training=mode == tf.estimator.ModeKeys.TRAIN)
+  dropout = tf.layers.dropout( # 👍👍❤❤️ 果然是 training 的时候 dropout 的.
+      inputs=dense, rate=0.4, training= mode == tf.estimator.ModeKeys.TRAIN) # ❤️👍 应该是 training = True 时执行.
 
   # Logits layer
   # Input Tensor Shape: [batch_size, 1024]
-  # Output Tensor Shape: [batch_size, 10]
-  logits = tf.layers.dense(inputs=dropout, units=10)
+  # Output Tensor Shape: [batch_size, 10] # 👍👍 未经过 non linear projection
+  logits = tf.layers.dense(inputs=dropout, units=10) # 👍❤️ 将 dense feature 转换成最终的 logits.
 
   predictions = {
       # Generate predictions (for PREDICT and EVAL mode)
@@ -93,11 +93,12 @@ def cnn_model_fn(features, labels, mode):
       # `logging_hook`.
       "probabilities": tf.nn.softmax(logits, name="softmax_tensor")
   }
+
   if mode == tf.estimator.ModeKeys.PREDICT:
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 
   # Calculate Loss (for both TRAIN and EVAL modes)
-  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits)
+  loss = tf.losses.sparse_softmax_cross_entropy(labels=labels, logits=logits) # ❤️ loss, >???? 需要注意一下.
 
   # Configure the Training Op (for TRAIN mode)
   if mode == tf.estimator.ModeKeys.TRAIN:
@@ -109,10 +110,9 @@ def cnn_model_fn(features, labels, mode):
 
   # Add evaluation metrics (for EVAL mode)
   eval_metric_ops = {
-      "accuracy": tf.metrics.accuracy(
-          labels=labels, predictions=predictions["classes"])}
-  return tf.estimator.EstimatorSpec(
-      mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
+      "accuracy": tf.metrics.accuracy(labels=labels, predictions=predictions["classes"])
+      } # 👍 这种输入结构果然是 dictionary.
+  return tf.estimator.EstimatorSpec(mode=mode, loss=loss, eval_metric_ops=eval_metric_ops)
 
 
 def main(unused_argv):
@@ -130,8 +130,7 @@ def main(unused_argv):
   # Set up logging for predictions
   # Log the values in the "Softmax" tensor with label "probabilities"
   tensors_to_log = {"probabilities": "softmax_tensor"}
-  logging_hook = tf.train.LoggingTensorHook(
-      tensors=tensors_to_log, every_n_iter=50)
+  logging_hook = tf.train.LoggingTensorHook(tensors=tensors_to_log, every_n_iter=50)
 
   # Train the model
   train_input_fn = tf.estimator.inputs.numpy_input_fn(
@@ -157,4 +156,3 @@ def main(unused_argv):
 
 if __name__ == "__main__":
   tf.app.run()
-
