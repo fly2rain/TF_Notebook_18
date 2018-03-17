@@ -2,3 +2,4 @@ Datasets/*
 *.jpg
 *.png
 *.bmp
+*.pyc
