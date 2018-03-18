@@ -3,3 +3,9 @@ Datasets/*
 *.png
 *.bmp
 *.pyc
+code_to_book__reinforcement_learning_an_introduction/.idea
+code_to_book__reinforcement_learning_an_introduction/temp.py
+*.pyc
+code_to_book__reinforcement_learning_an_introduction/chapter01/optimal_policy*
+code_to_book__reinforcement_learning_an_introduction/latex
+DeepLearningFlappyBird/saved_networks/*
