@@ -28,12 +28,12 @@ def cnn_model_fn(features, labels, mode):
   # Input Layer
   # Reshape X to 4-D tensor: [batch_size, width, height, channels]
   # MNIST images are 28x28 pixels, and have one color channel
-  input_layer = tf.reshape(features["x"], [-1, 28, 28, 1])
+  input_layer = tf.reshape(features["x"], [-1, 28, 28, 1]) # 👍 确定三个, 最后一个可以不用确定.
 
   # Convolutional Layer #1
   # Computes 32 features using a 5x5 filter with ReLU activation.
   # Padding is added to preserve width and height.
-  # Input Tensor Shape: [batch_size, 28, 28, 1]
+  # Input Tensor Shape: [batch_size, 28, 28, 1] # 👍 不会 batch_size 是整个数据库吧.
   # Output Tensor Shape: [batch_size, 28, 28, 32]
   conv1 = tf.layers.conv2d(
       inputs=input_layer,
@@ -78,7 +78,7 @@ def cnn_model_fn(features, labels, mode):
   dense = tf.layers.dense(inputs=pool2_flat, units=1024, activation=tf.nn.relu)
 
   # Add dropout operation; 0.6 probability that element will be kept
-  dropout = tf.layers.dropout(
+  dropout = tf.layers.dropout( # 👍👍 当 train 的时候, 才 dropout 👍👍 
       inputs=dense, rate=0.4, training=mode == tf.estimator.ModeKeys.TRAIN)
 
   # Logits layer
@@ -93,6 +93,7 @@ def cnn_model_fn(features, labels, mode):
       # `logging_hook`.
       "probabilities": tf.nn.softmax(logits, name="softmax_tensor")
   }
+
   if mode == tf.estimator.ModeKeys.PREDICT:
     return tf.estimator.EstimatorSpec(mode=mode, predictions=predictions)
 

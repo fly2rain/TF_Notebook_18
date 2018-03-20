@@ -3,6 +3,7 @@ Datasets/*
 *.png
 *.bmp
 *.pyc
+*.svg
 code_to_book__reinforcement_learning_an_introduction/.idea
 code_to_book__reinforcement_learning_an_introduction/temp.py
 *.pyc
